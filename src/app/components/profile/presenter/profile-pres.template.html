@@ -1,0 +1,42 @@
+<div class="profile-card-horizontal">
+  <div class="profile-section user-section" routerLink="/profile/details">
+    <div class="user-avatar">
+      <span class="avatar-text">{{ getInitials(containerData?.fullName) }}</span>
+    </div>
+    <div class="user-info">
+      <h3 class="user-name">{{ containerData?.fullName }}</h3>
+      <p class="user-email">{{ containerData?.email }}</p>
+    </div>
+  </div>
+
+  <div class="profile-section stats-section">
+    <div class="stat-item status-item">
+      <div class="stat-icon" [style.color]="getStatusColor()">
+        {{ getStatusIcon() }}
+      </div>
+      <div class="stat-info">
+        <span class="stat-value" [style.color]="getStatusColor()">{{ containerData?.status }}</span>
+        <span class="stat-label">Status</span>
+      </div>
+    </div>
+
+    <div class="stat-item miles-item">
+      <div class="stat-icon">✈️</div>
+      <div class="stat-info">
+        <span class="stat-value">{{ formatMiles(containerData?.miles || 0) }}</span>
+        <span class="stat-label">Miles</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="profile-section action-section">
+    <button class="view-details-button" (click)="viewProfileDetails()">
+      <span class="details-icon">👤</span>
+      <span class="details-text">View Details</span>
+    </button>
+    <button class="logout-button" (click)="onLogout()">
+      <span class="logout-icon">🚪</span>
+      <span class="logout-text">Sign Out</span>
+    </button>
+  </div>
+</div>

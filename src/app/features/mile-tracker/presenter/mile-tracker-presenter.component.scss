@@ -1,0 +1,172 @@
+@import '../../../../styles/variables';
+
+.mile-tracker-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.loading-container, .error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 2rem;
+  text-align: center;
+  background-color: $background-light;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.error-container {
+  color: $error-color;
+
+  mat-icon {
+    font-size: 48px;
+    height: 48px;
+    width: 48px;
+  }
+}
+
+.summary-card {
+  background-color: $primary-color-light;
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .summary-item {
+    text-align: center;
+
+    .summary-value {
+      font-size: 2rem;
+      font-weight: bold;
+      color: $primary-color;
+    }
+
+    .summary-label {
+      font-size: 0.9rem;
+      color: $text-secondary;
+      margin-top: 0.5rem;
+    }
+
+    &.expiring {
+      .summary-value {
+        color: $warn-color;
+      }
+    }
+  }
+
+  .status-section {
+    margin-top: 1.5rem;
+
+    .status-info {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+      color: $text-secondary;
+    }
+  }
+}
+
+.transactions-card {
+  margin-bottom: 1.5rem;
+
+  .transactions-table {
+    width: 100%;
+
+    .mat-column-date {
+      width: 120px;
+    }
+
+    .mat-column-miles {
+      width: 120px;
+      text-align: right;
+      font-weight: 500;
+
+      &.earned {
+        color: $success-color;
+      }
+
+      &.spent {
+        color: $warn-color;
+      }
+    }
+
+    .mat-column-status {
+      width: 100px;
+
+      .status-badge {
+        padding: 4px 8px;
+        border-radius: 16px;
+        font-size: 0.8rem;
+        text-transform: capitalize;
+
+        &.pending {
+          background-color: $warning-light;
+          color: $warning-dark;
+        }
+
+        &.completed {
+          background-color: $success-light;
+          color: $success-dark;
+        }
+
+        &.expired {
+          background-color: $error-light;
+          color: $error-dark;
+        }
+      }
+    }
+  }
+
+  .no-data {
+    text-align: center;
+    padding: 2rem;
+    color: $text-secondary;
+  }
+}
+
+.charts-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 1.5rem;
+
+  .chart-card {
+    min-height: 300px;
+
+    .chart-placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 250px;
+      background-color: $background-light;
+      border-radius: 4px;
+      color: $text-secondary;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .charts-container {
+    grid-template-columns: 1fr;
+  }
+
+  .summary-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 576px) {
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,131 @@
+<div class="mile-tracker-container">
+  <!-- Loading and Error States -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Loading your miles data...</p>
+  </div>
+
+  <div *ngIf="error" class="error-container">
+    <mat-icon color="warn">error_outline</mat-icon>
+    <p>{{ error }}</p>
+    <button mat-button color="primary">Retry</button>
+  </div>
+
+  <!-- Miles Summary Card -->
+  <mat-card *ngIf="summary && !loading" class="summary-card">
+    <mat-card-header>
+      <mat-card-title>Miles Summary</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="summary-grid">
+        <div class="summary-item">
+          <div class="summary-value">{{ summary.availableMiles | number }}</div>
+          <div class="summary-label">Available Miles</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-value">{{ summary.totalMiles | number }}</div>
+          <div class="summary-label">Total Miles</div>
+        </div>
+        <div class="summary-item expiring" *ngIf="summary.expiringSoonMiles">
+          <div class="summary-value">{{ summary.expiringSoonMiles | number }}</div>
+          <div class="summary-label">
+            Expiring on {{ summary.expiringSoonDate | date:'shortDate' }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Status Progress -->
+      <div class="status-section">
+        <div class="status-info">
+          <span>{{ summary.nextStatus }} Status</span>
+          <span>{{ summary.milesUntilNextStatus | number }} miles needed</span>
+        </div>
+        <mat-progress-bar
+          mode="determinate"
+          [value]="summary.statusProgress">
+        </mat-progress-bar>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Transactions Section -->
+  <mat-card *ngIf="transactions && !loading" class="transactions-card">
+    <mat-card-header>
+      <mat-card-title>Recent Transactions</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <table mat-table [dataSource]="transactions" class="transactions-table">
+        <!-- Date Column -->
+        <ng-container matColumnDef="date">
+          <th mat-header-cell *matHeaderCellDef> Date </th>
+          <td mat-cell *matCellDef="let transaction"> {{ transaction.date | date:'mediumDate' }} </td>
+        </ng-container>
+
+        <!-- Description Column -->
+        <ng-container matColumnDef="description">
+          <th mat-header-cell *matHeaderCellDef> Description </th>
+          <td mat-cell *matCellDef="let transaction"> {{ transaction.description }} </td>
+        </ng-container>
+
+        <!-- Category Column -->
+        <ng-container matColumnDef="category">
+          <th mat-header-cell *matHeaderCellDef> Category </th>
+          <td mat-cell *matCellDef="let transaction"> {{ transaction.category }} </td>
+        </ng-container>
+
+        <!-- Miles Column -->
+        <ng-container matColumnDef="miles">
+          <th mat-header-cell *matHeaderCellDef> Miles </th>
+          <td mat-cell *matCellDef="let transaction"
+              [ngClass]="{'earned': transaction.type === 'earned', 'spent': transaction.type === 'spent'}">
+            {{ transaction.type === 'earned' ? '+' : '-' }}{{ transaction.miles | number }}
+          </td>
+        </ng-container>
+
+        <!-- Status Column -->
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef> Status </th>
+          <td mat-cell *matCellDef="let transaction">
+            <span class="status-badge" [ngClass]="transaction.status">
+              {{ transaction.status }}
+            </span>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="['date', 'description', 'category', 'miles', 'status']"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['date', 'description', 'category', 'miles', 'status']"></tr>
+      </table>
+
+      <div *ngIf="transactions.length === 0" class="no-data">
+        <p>No transactions found</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Charts Section -->
+  <div *ngIf="monthlyBreakdown && !loading" class="charts-container">
+    <mat-card class="chart-card">
+      <mat-card-header>
+        <mat-card-title>Monthly Activity</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <!-- Here you would integrate with your preferred charting library -->
+        <div class="chart-placeholder">
+          <p>Monthly activity chart will be displayed here</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="chart-card" *ngIf="categoryBreakdown">
+      <mat-card-header>
+        <mat-card-title>Category Breakdown</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <!-- Here you would integrate with your preferred charting library -->
+        <div class="chart-placeholder">
+          <p>Category breakdown chart will be displayed here</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

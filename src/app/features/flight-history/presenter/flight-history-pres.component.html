@@ -1,0 +1,161 @@
+<div class="flight-history-container">
+  <div class="header">
+    <h2>Flight History</h2>
+    <p>View and filter your past and upcoming flights</p>
+  </div>
+
+  <div class="filter-section" *ngIf="!loading">
+    <form [formGroup]="filterForm" class="filter-form">
+      <div class="filters-container">
+        <div class="filter-group">
+          <!-- Date filters -->
+          <mat-form-field appearance="outline">
+            <mat-label>Start Date</mat-label>
+            <input matInput [matDatepicker]="startPicker" formControlName="startDate" placeholder="MM/DD/YYYY">
+            <mat-datepicker-toggle matIconSuffix [for]="startPicker"></mat-datepicker-toggle>
+            <mat-datepicker #startPicker></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>End Date</mat-label>
+            <input matInput [matDatepicker]="endPicker" formControlName="endDate" placeholder="MM/DD/YYYY">
+            <mat-datepicker-toggle matIconSuffix [for]="endPicker"></mat-datepicker-toggle>
+            <mat-datepicker #endPicker></mat-datepicker>
+          </mat-form-field>
+        </div>
+
+        <div class="filter-group">
+          <!-- Origin/Destination filters -->
+          <mat-form-field appearance="outline">
+            <mat-label>Origin</mat-label>
+            <mat-select formControlName="origin">
+              <mat-option [value]="">All Origins</mat-option>
+              <mat-option *ngFor="let origin of availableOrigins" [value]="origin">
+                {{ origin }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Destination</mat-label>
+            <mat-select formControlName="destination">
+              <mat-option [value]="">All Destinations</mat-option>
+              <mat-option *ngFor="let destination of availableDestinations" [value]="destination">
+                {{ destination }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="filter-group">
+          <!-- Status and sorting -->
+          <mat-form-field appearance="outline">
+            <mat-label>Status</mat-label>
+            <mat-select formControlName="status">
+              <mat-option [value]="">All Statuses</mat-option>
+              <mat-option *ngFor="let status of availableStatuses" [value]="status">
+                {{ status }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Sort By</mat-label>
+            <mat-select formControlName="sortBy">
+              <mat-option *ngFor="let option of sortOptions" [value]="option.value">
+                {{ option.label }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Order</mat-label>
+            <mat-select formControlName="sortDirection">
+              <mat-option *ngFor="let dir of sortDirections" [value]="dir.value">
+                {{ dir.label }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="filter-actions">
+        <button mat-flat-button color="primary" (click)="clearFilters()">
+          Clear Filters
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="loading-error" *ngIf="loading">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Loading flight history...</p>
+  </div>
+
+  <div class="error-message" *ngIf="error">
+    <mat-icon color="warn">error</mat-icon>
+    <p>{{ error }}</p>
+  </div>
+
+  <div class="flights-table" *ngIf="!loading && !error && flights.length > 0">
+    <table mat-table [dataSource]="flights" class="mat-elevation-z2">
+      <!-- Flight Number Column -->
+      <ng-container matColumnDef="flightNumber">
+        <th mat-header-cell *matHeaderCellDef> Flight </th>
+        <td mat-cell *matCellDef="let flight"> {{ flight.flightNumber }} </td>
+      </ng-container>
+
+      <!-- Date Column -->
+      <ng-container matColumnDef="date">
+        <th mat-header-cell *matHeaderCellDef> Date </th>
+        <td mat-cell *matCellDef="let flight">
+          <div class="date-time">
+            <div>{{ flight.departureDate | date:'MMM d, yyyy' }}</div>
+            <div class="time">{{ flight.departureTime }}</div>
+          </div>
+        </td>
+      </ng-container>
+
+      <!-- Origin Column -->
+      <ng-container matColumnDef="origin">
+        <th mat-header-cell *matHeaderCellDef> Origin </th>
+        <td mat-cell *matCellDef="let flight"> {{ flight.origin }} </td>
+      </ng-container>
+
+      <!-- Destination Column -->
+      <ng-container matColumnDef="destination">
+        <th mat-header-cell *matHeaderCellDef> Destination </th>
+        <td mat-cell *matCellDef="let flight"> {{ flight.destination }} </td>
+      </ng-container>
+
+      <!-- Status Column -->
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef> Status </th>
+        <td mat-cell *matCellDef="let flight" [ngClass]="'status-' + flight.status.toLowerCase()">
+          {{ flight.status }}
+        </td>
+      </ng-container>
+
+      <!-- Miles Column -->
+      <ng-container matColumnDef="miles">
+        <th mat-header-cell *matHeaderCellDef> Miles </th>
+        <td mat-cell *matCellDef="let flight"> {{ flight.miles | number }} </td>
+      </ng-container>
+
+      <!-- Price Column -->
+      <ng-container matColumnDef="price">
+        <th mat-header-cell *matHeaderCellDef> Price </th>
+        <td mat-cell *matCellDef="let flight"> {{ flight.price | currency }} </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </div>
+
+  <div class="no-data" *ngIf="!loading && !error && flights.length === 0">
+    <mat-icon>flight</mat-icon>
+    <p>No flights found matching your criteria.</p>
+    <button mat-button color="primary" (click)="clearFilters()">Clear Filters</button>
+  </div>
+</div>

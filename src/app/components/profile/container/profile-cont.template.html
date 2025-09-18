@@ -1,0 +1,13 @@
+<ng-container *ngIf="!isDetailedView && (containerData$ | async) as profile">
+  <app-profile-presenter
+    [containerData]="profile"
+    (logoutClick)="onLogout()">
+  </app-profile-presenter>
+</ng-container>
+
+<ng-container *ngIf="isDetailedView && (detailedProfileData$ | async) as detailedProfile">
+  <app-profile-detail-presenter
+    [detailedData]="detailedProfile"
+    (logoutClick)="onLogout()">
+  </app-profile-detail-presenter>
+</ng-container>

@@ -1,0 +1,273 @@
+<div class="profile-detail-container" *ngIf="detailedData">
+  <!-- Hero Section - User Status & Miles -->
+  <div class="profile-hero" [style.background]="'linear-gradient(to right, #1a237e, #4a148c)'">
+    <div class="profile-hero-content">
+      <div class="avatar-container">
+        <div class="avatar-circle">
+          <span class="avatar-text">{{ getInitials(detailedData.fullName) }}</span>
+        </div>
+        <div class="status-badge" [style.background-color]="getStatusColor()">
+          <span class="status-icon">{{ getStatusIcon() }}</span>
+          <span class="status-text">{{ detailedData.status }}</span>
+        </div>
+      </div>
+
+      <div class="user-details">
+        <h1 class="user-name">{{ detailedData.fullName }}</h1>
+        <p class="user-email">{{ detailedData.email }}</p>
+        <p class="member-since" *ngIf="detailedData.memberSince">
+          Member since: {{ detailedData.memberSince | date:'mediumDate' }}
+        </p>
+      </div>
+
+      <div class="miles-summary">
+        <div class="miles-card">
+          <div class="miles-heading">Current Miles</div>
+          <div class="miles-value">{{ formatMiles(detailedData.miles) }}</div>
+
+          <ng-container *ngIf="detailedData.nextStatus">
+            <div class="status-progress">
+              <div class="progress-label">
+                <span>Next Status: {{ detailedData.nextStatus }}</span>
+                <span>{{ formatMiles(detailedData.milesNeededForNextStatus) }} more miles needed</span>
+              </div>
+              <div class="progress-bar-container">
+                <div class="progress-bar"
+                     [style.width.%]="detailedData.statusProgress">
+                </div>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation Tabs -->
+  <div class="profile-tabs">
+    <button class="tab-button"
+            [class.active]="activeTab === 'personal'"
+            (click)="setActiveTab('personal')">
+      <mat-icon>person</mat-icon>
+      Personal Information
+    </button>
+    <button class="tab-button"
+            [class.active]="activeTab === 'payment'"
+            (click)="setActiveTab('payment')">
+      <mat-icon>credit_card</mat-icon>
+      Payment Methods
+    </button>
+    <button class="tab-button"
+            [class.active]="activeTab === 'preferences'"
+            (click)="setActiveTab('preferences')">
+      <mat-icon>settings</mat-icon>
+      Travel Preferences
+    </button>
+    <button class="tab-button"
+            [class.active]="activeTab === 'miles'"
+            (click)="setActiveTab('miles')">
+      <mat-icon>timeline</mat-icon>
+      Miles Activity
+    </button>
+  </div>
+
+  <!-- Tab Content -->
+  <div class="tab-content">
+    <!-- Personal Information Tab -->
+    <div class="tab-pane" *ngIf="activeTab === 'personal'">
+      <div class="tab-section">
+        <h2 class="section-title">Personal Details</h2>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">Full Name</span>
+            <span class="info-value">{{ detailedData.fullName }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Email Address</span>
+            <span class="info-value">{{ detailedData.email }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Phone Number</span>
+            <span class="info-value">{{ detailedData.phoneNumber ? detailedData.phoneNumber : 'Not provided' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Date of Birth</span>
+            <span class="info-value">{{ detailedData.birthDate ? (detailedData.birthDate | date:'mediumDate') : 'Not provided' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Nationality</span>
+            <span class="info-value">{{ detailedData.nationality ? detailedData.nationality : 'Not provided' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Passport Number</span>
+            <span class="info-value">{{ detailedData.passportNumber ? detailedData.passportNumber : 'Not provided' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Passport Expiry</span>
+            <span class="info-value">{{ detailedData.passportExpiry ? (detailedData.passportExpiry | date:'mediumDate') : 'Not provided' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-section">
+        <h2 class="section-title">Address Information</h2>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">Street Address</span>
+            <span class="info-value">{{ detailedData.address?.street ? detailedData.address?.street : 'Not provided' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">City</span>
+            <span class="info-value">{{ detailedData.address?.city ? detailedData.address?.city : 'Not provided' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">State/Province</span>
+            <span class="info-value">{{ detailedData.address?.state ? detailedData.address?.state : 'Not provided' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Zip/Postal Code</span>
+            <span class="info-value">{{ detailedData.address?.zipCode ? detailedData.address?.zipCode : 'Not provided' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Country</span>
+            <span class="info-value">{{ detailedData.address?.country ? detailedData.address?.country : 'Not provided' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="action-buttons">
+        <button class="edit-button">
+          <mat-icon>edit</mat-icon>
+          Edit Information
+        </button>
+      </div>
+    </div>
+
+    <!-- Payment Methods Tab -->
+    <div class="tab-pane" *ngIf="activeTab === 'payment'">
+      <div class="tab-section">
+        <h2 class="section-title">Payment Methods</h2>
+
+        <div class="cards-container">
+          <div class="card-item" *ngFor="let card of detailedData.paymentMethods">
+            <div class="card-header" [class.default]="card.isDefault">
+              <span class="card-type">{{ card.type | titlecase }} Card</span>
+              <span class="default-badge" *ngIf="card.isDefault">Default</span>
+            </div>
+            <div class="card-body">
+              <div class="card-number">{{ maskCardNumber(card.cardNumber) }}</div>
+              <div class="card-details">
+                <div class="card-holder">{{ card.cardHolder }}</div>
+                <div class="card-expiry">Expires: {{ card.expiryDate }}</div>
+              </div>
+            </div>
+            <div class="card-actions">
+              <button class="card-action-btn">Edit</button>
+              <button class="card-action-btn" *ngIf="!card.isDefault">Set as Default</button>
+              <button class="card-action-btn remove">Remove</button>
+            </div>
+          </div>
+
+          <div class="add-card-container">
+            <button class="add-card-button">
+              <mat-icon>add_circle</mat-icon>
+              Add New Payment Method
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Travel Preferences Tab -->
+    <div class="tab-pane" *ngIf="activeTab === 'preferences'">
+      <div class="tab-section">
+        <h2 class="section-title">Travel Preferences</h2>
+
+        <div class="preferences-container">
+          <div class="preference-item">
+            <span class="preference-label">Preferred Seat</span>
+            <span class="preference-value">{{ detailedData.preferences?.seatType ? (detailedData.preferences?.seatType | titlecase) : 'No preference' }}</span>
+          </div>
+          <div class="preference-item">
+            <span class="preference-label">Meal Preference</span>
+            <span class="preference-value">{{ detailedData.preferences?.mealPreference ? detailedData.preferences?.mealPreference : 'No preference' }}</span>
+          </div>
+          <div class="preference-item">
+            <span class="preference-label">Special Assistance</span>
+            <span class="preference-value">{{ detailedData.preferences?.specialAssistance ? 'Yes' : 'No' }}</span>
+          </div>
+        </div>
+
+        <div class="action-buttons">
+          <button class="edit-button">
+            <mat-icon>edit</mat-icon>
+            Edit Preferences
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Miles Activity Tab -->
+    <div class="tab-pane" *ngIf="activeTab === 'miles'">
+      <div class="tab-section">
+        <h2 class="section-title">Miles Summary</h2>
+
+        <div class="miles-stats">
+          <div class="miles-stat-card">
+            <div class="stat-title">Current Balance</div>
+            <div class="stat-value">{{ formatMiles(detailedData.miles) }}</div>
+          </div>
+
+          <div class="miles-stat-card">
+            <div class="stat-title">Earned This Year</div>
+            <div class="stat-value">{{ formatMiles(detailedData.milesEarnedThisYear) }}</div>
+          </div>
+
+          <div class="miles-stat-card">
+            <div class="stat-title">Spent This Year</div>
+            <div class="stat-value">{{ formatMiles(detailedData.milesSpentThisYear) }}</div>
+          </div>
+
+          <div class="miles-stat-card warning">
+            <div class="stat-title">Expiring This Year</div>
+            <div class="stat-value">{{ formatMiles(detailedData.milesExpiringThisYear) }}</div>
+          </div>
+        </div>
+
+        <div class="membership-status">
+          <h3 class="status-title">
+            <span class="status-icon">{{ getStatusIcon() }}</span>
+            {{ detailedData.status }} Status
+          </h3>
+
+          <div class="status-details">
+            <div class="status-expiry">
+              <span class="expiry-label">Status valid until:</span>
+              <span class="expiry-date">{{ detailedData.statusExpiryDate ? (detailedData.statusExpiryDate | date:'mediumDate') : 'Unknown' }}</span>
+            </div>
+
+            <div class="status-upgrade" *ngIf="detailedData.nextStatus">
+              <div class="upgrade-info">
+                <span class="upgrade-label">Progress to {{ detailedData.nextStatus }}:</span>
+                <span class="upgrade-value">{{ detailedData.statusProgress }}%</span>
+              </div>
+              <div class="upgrade-progress-bar">
+                <div class="progress-fill" [style.width.%]="detailedData.statusProgress"></div>
+              </div>
+              <div class="upgrade-miles">
+                {{ formatMiles(detailedData.milesNeededForNextStatus) }} more miles needed
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="profile-not-found" *ngIf="!detailedData">
+  <div class="loading-spinner">
+    <div class="spinner"></div>
+  </div>
+  <p>Loading profile information...</p>
+</div>
