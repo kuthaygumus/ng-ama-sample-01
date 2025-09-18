@@ -1,0 +1,6 @@
+<ng-container *ngIf="containerData$ | async as profile">
+  <app-profile-presenter
+    [containerData]="profile"
+    (logoutClick)="onLogout()">
+  </app-profile-presenter>
+</ng-container>

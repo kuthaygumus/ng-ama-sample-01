@@ -1,0 +1,6 @@
+<div class="login-container">
+  <app-login-presenter
+    [containerData]="containerData$ | async"
+    (loginSubmit)="onLogin($event)">
+  </app-login-presenter>
+</div>
